@@ -33,8 +33,6 @@ function createCalendar(content) {
 
         btn.classList.add("door");
 
-        btn.textContent = day;
-
 if (day < diff) {
     btn.classList.add("opened");
     btn.innerHTML = `${day} ✔`;
