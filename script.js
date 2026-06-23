@@ -1,29 +1,45 @@
 console.log("💍 Wedding script loaded");
 
-const weddingDate = new Date("2026-07-17");
-const startDate = new Date("2026-06-24");
+// ----------------------
+// SAFE DATE SETUP
+// (avoids Safari parsing issues)
+// ----------------------
+const weddingDate = new Date(2026, 6, 17); // July 17, 2026
+const startDate = new Date(2026, 5, 24);   // June 24, 2026
 
+// normalize time to avoid timezone off-by-one issues
+weddingDate.setHours(0, 0, 0, 0);
+startDate.setHours(0, 0, 0, 0);
+
+// ----------------------
+// DOM ELEMENTS
+// ----------------------
 const calendar = document.getElementById("calendar");
 const modal = document.getElementById("modal");
 const modalTitle = document.getElementById("modalTitle");
 const modalBody = document.getElementById("modalBody");
 const closeBtn = document.getElementById("closeBtn");
+const countdownEl = document.getElementById("countdown");
 
-// safety checks (VERY important for mobile)
+// HARD STOP if required elements are missing
 if (!calendar || !modal || !modalTitle || !modalBody || !closeBtn) {
-    console.error("❌ Missing DOM elements. Script stopped.");
+    throw new Error("❌ Missing required DOM elements. Script stopped.");
 }
 
-// close modal safely
-closeBtn?.addEventListener("click", () => {
+// ----------------------
+// CLOSE MODAL
+// ----------------------
+closeBtn.addEventListener("click", () => {
     modal.classList.add("hidden");
 });
 
-// load content
+// ----------------------
+// LOAD CONTENT
+// ----------------------
 fetch("./content.json")
-    .then(r => {
-        if (!r.ok) throw new Error("content.json not found");
-        return r.json();
+    .then(res => {
+        if (!res.ok) throw new Error("content.json not found");
+        return res.json();
     })
     .then(data => createCalendar(data))
     .catch(err => {
@@ -31,11 +47,15 @@ fetch("./content.json")
         createCalendar({});
     });
 
+// ----------------------
+// CREATE CALENDAR
+// ----------------------
 function createCalendar(content = {}) {
 
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    const diff = Math.floor(
+    const diffDays = Math.floor(
         (today - startDate) / (1000 * 60 * 60 * 24)
     ) + 1;
 
@@ -44,31 +64,32 @@ function createCalendar(content = {}) {
     for (let day = 1; day <= 24; day++) {
 
         const btn = document.createElement("button");
-        btn.classList.add("door");
+        btn.className = "door";
 
-        // --- state ---
-        if (day < diff) {
+        const isPast = day < diffDays;
+        const isToday = day === diffDays;
+        const isFuture = day > diffDays;
+
+        if (isPast) {
             btn.classList.add("opened");
             btn.innerHTML = `<span>${day} ✔</span>`;
-        }
-        else if (day === diff) {
+        } else if (isToday) {
             btn.classList.add("today");
             btn.innerHTML = `<span>${day} ✨</span>`;
-        }
-        else {
+        } else {
             btn.classList.add("locked");
             btn.innerHTML = `<span>${day}</span>`;
+            btn.disabled = true;
         }
 
-        // --- click ---
         btn.addEventListener("click", () => {
 
-            const entry = content[day];
-
-            if (day > diff) {
+            if (isFuture) {
                 openModal(`Day ${day}`, "🔒 Come back later.");
                 return;
             }
+
+            const entry = content[String(day)];
 
             if (!entry) {
                 openModal(`Day ${day}`, "❤️ Something beautiful is still being prepared for you.");
@@ -84,14 +105,18 @@ function createCalendar(content = {}) {
     updateCountdown();
 }
 
-// modal helper
+// ----------------------
+// MODAL HELPERS
+// ----------------------
 function openModal(title, body) {
     modalTitle.textContent = title;
     modalBody.innerHTML = body;
     modal.classList.remove("hidden");
 }
 
-// render content types
+// ----------------------
+// RENDER ENTRY TYPES
+// ----------------------
 function renderEntry(entry, day) {
 
     modalTitle.textContent = entry.title || `Day ${day}`;
@@ -101,8 +126,8 @@ function renderEntry(entry, day) {
         case "coupon":
             modalBody.innerHTML = `
                 <div class="coupon">
-                    <h3>🎟 ${entry.title}</h3>
-                    <p>${entry.text}</p>
+                    <h3>🎟 ${entry.title || ""}</h3>
+                    <p>${entry.text || ""}</p>
                     <small>Redeem anytime ❤️</small>
                 </div>
             `;
@@ -111,7 +136,7 @@ function renderEntry(entry, day) {
         case "memory":
             modalBody.innerHTML = `
                 <div class="memory">
-                    ${entry.photo ? `<img src="${entry.photo}" />` : ""}
+                    ${entry.photo ? `<img src="${entry.photo}" alt="memory photo"/>` : ""}
                     <p>${entry.text || ""}</p>
                 </div>
             `;
@@ -131,11 +156,11 @@ function renderEntry(entry, day) {
         case "quiz":
             modalBody.innerHTML = `
                 <div class="quiz">
-                    <h3>❓ ${entry.title}</h3>
-                    <p>${entry.question}</p>
+                    <h3>❓ ${entry.title || ""}</h3>
+                    <p>${entry.question || ""}</p>
                     <details>
                         <summary>Reveal answer</summary>
-                        <p>${entry.answer}</p>
+                        <p>${entry.answer || ""}</p>
                     </details>
                 </div>
             `;
@@ -148,18 +173,20 @@ function renderEntry(entry, day) {
     modal.classList.remove("hidden");
 }
 
-// countdown
+// ----------------------
+// COUNTDOWN
+// ----------------------
 function updateCountdown() {
 
-    const today = new Date();
+    if (!countdownEl) return;
 
-    const days = Math.ceil(
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const diffDays = Math.ceil(
         (weddingDate - today) / (1000 * 60 * 60 * 24)
     );
 
-    const el = document.getElementById("countdown");
-
-    if (el) {
-        el.innerText = `${days} days until we get married ❤️`;
-    }
+    countdownEl.textContent =
+        `${diffDays} days until we get married ❤️`;
 }
