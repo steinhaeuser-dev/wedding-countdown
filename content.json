@@ -4,5 +4,25 @@
     "title": "The Day Everything Changed 💍",
     "text": "Unser erstes gemeinsames Foto als Verlobte 💍",
     "photo": "./photos/day1.jpg"
+  },
+
+  "2": {
+    "type": "coupon",
+    "title": "Love Coupon",
+    "text": "A kiss anytime you want 💋"
+  },
+
+  "3": {
+    "type": "quiz",
+    "title": "Our First Date",
+    "question": "Where did we go on our first date?",
+    "answer": "You already know 😏"
+  },
+
+  "4": {
+    "type": "audio",
+    "title": "A Message For You",
+    "text": "Close your eyes and listen ❤️",
+    "audio": "./audio/day4.mp3"
   }
 }
