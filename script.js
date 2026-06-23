@@ -35,13 +35,18 @@ function createCalendar(content) {
 
 if (day < diff) {
     btn.classList.add("opened");
-    btn.innerHTML = `${day} ✔`;
+    btn.innerHTML = `<span>${day} ✔</span>`;
 }
 
 else if (day === diff) {
     btn.classList.add("available");
     btn.classList.add("today");
-    btn.innerHTML = `${day} ✨`;
+    btn.innerHTML = `<span>${day} ✨</span>`;
+}
+
+else {
+    btn.classList.add("locked");
+    btn.innerHTML = `<span>${day}</span>`;
 }
 
 else {
