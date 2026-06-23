@@ -49,10 +49,6 @@ else {
     btn.innerHTML = `<span>${day}</span>`;
 }
 
-else {
-    btn.classList.add("locked");
-}
-
         btn.onclick = () => {
 
             if (day > diff) {
