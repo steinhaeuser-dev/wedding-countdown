@@ -1,88 +1,20 @@
-console.log("💍 Wedding script loaded");
-
-// ----------------------
-// DATE CONFIG
-// ----------------------
-
-// JS months are 0-based: June = 5, July = 6
-const weddingDate = new Date(2026, 6, 17); // July 17, 2026
-const startDate = new Date(2026, 5, 24);   // June 24, 2026
-
-weddingDate.setHours(0, 0, 0, 0);
-startDate.setHours(0, 0, 0, 0);
-
-// ----------------------
-// BERLIN DAY NORMALIZER (ROBUST CORE FIX)
-// ----------------------
-
-function toBerlinMidnightTimestamp(date) {
-    const parts = new Intl.DateTimeFormat("en-CA", {
-        timeZone: "Europe/Berlin",
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-    }).formatToParts(date);
-
-    const year = Number(parts.find(p => p.type === "year").value);
-    const month = Number(parts.find(p => p.type === "month").value);
-    const day = Number(parts.find(p => p.type === "day").value);
-
-    return Date.UTC(year, month - 1, day);
+function getBerlinTodayTs() {
+    return toBerlinMidnightTimestamp(new Date());
 }
-
-// ----------------------
-// DOM ELEMENTS
-// ----------------------
-
-const calendar = document.getElementById("calendar");
-const modal = document.getElementById("modal");
-const modalTitle = document.getElementById("modalTitle");
-const modalBody = document.getElementById("modalBody");
-const closeBtn = document.getElementById("closeBtn");
-const countdownEl = document.getElementById("countdown");
-
-if (!calendar || !modal || !modalTitle || !modalBody || !closeBtn) {
-    throw new Error("❌ Missing required DOM elements");
-}
-
-// ----------------------
-// CLOSE MODAL
-// ----------------------
-
-closeBtn.addEventListener("click", () => {
-    modal.classList.add("hidden");
-});
-
-// ----------------------
-// DAY CALCULATION (BERLIN SAFE)
-// ----------------------
 
 function getDayNumber(start, today) {
     const startTs = toBerlinMidnightTimestamp(start);
     const todayTs = toBerlinMidnightTimestamp(today);
 
-    const diff = Math.floor((todayTs - startTs) / (1000 * 60 * 60 * 24));
+    const diff = (todayTs - startTs) / (1000 * 60 * 60 * 24);
 
-    return diff + 1; // Day 1 = start date
+    // IMPORTANT FIX:
+    // clamp so before start date doesn't produce negative active days
+    return Math.max(1, Math.floor(diff) + 1);
 }
 
 // ----------------------
-// LOAD CONTENT
-// ----------------------
-
-fetch("./content.json")
-    .then(res => {
-        if (!res.ok) throw new Error("content.json not found");
-        return res.json();
-    })
-    .then(data => createCalendar(data))
-    .catch(err => {
-        console.error("Failed to load content:", err);
-        createCalendar({});
-    });
-
-// ----------------------
-// CREATE CALENDAR
+// CREATE CALENDAR (FIXED)
 // ----------------------
 
 function createCalendar(content = {}) {
@@ -99,7 +31,6 @@ function createCalendar(content = {}) {
 
         const isPast = day < diffDays;
         const isToday = day === diffDays;
-        const isFuture = day > diffDays;
 
         if (isPast) {
             btn.classList.add("opened");
@@ -110,12 +41,17 @@ function createCalendar(content = {}) {
         } else {
             btn.classList.add("locked");
             btn.innerHTML = `<span>${day}</span>`;
-            btn.disabled = true;
+            btn.disabled = false; // IMPORTANT: allow click so we can show message
         }
 
         btn.addEventListener("click", () => {
 
-            if (isFuture) {
+            const currentToday = new Date();
+            const currentDiff = getDayNumber(startDate, currentToday);
+
+            const nowIsFutureDay = day > currentDiff;
+
+            if (nowIsFutureDay) {
                 openModal(`Day ${day}`, "🔒 Come back later.");
                 return;
             }
@@ -137,93 +73,4 @@ function createCalendar(content = {}) {
     }
 
     updateCountdown();
-}
-
-// ----------------------
-// MODAL
-// ----------------------
-
-function openModal(title, body) {
-    modalTitle.textContent = title;
-    modalBody.innerHTML = body;
-    modal.classList.remove("hidden");
-}
-
-// ----------------------
-// RENDER ENTRY
-// ----------------------
-
-function renderEntry(entry, day) {
-
-    modalTitle.textContent = entry.title || `Day ${day}`;
-
-    switch (entry.type) {
-
-        case "memory":
-            modalBody.innerHTML = `
-                <div class="memory">
-                    ${entry.photo ? `<img src="${entry.photo}" alt="memory"/>` : ""}
-                    <p>${entry.text || ""}</p>
-                </div>
-            `;
-            break;
-
-        case "coupon":
-            modalBody.innerHTML = `
-                <div class="coupon">
-                    <h3>🎟 ${entry.title || ""}</h3>
-                    <p>${entry.text || ""}</p>
-                    <small>Redeem anytime ❤️</small>
-                </div>
-            `;
-            break;
-
-        case "audio":
-            modalBody.innerHTML = `
-                <div class="audio">
-                    <p>${entry.text || ""}</p>
-                    <audio controls>
-                        <source src="${entry.audio}" type="audio/mpeg">
-                    </audio>
-                </div>
-            `;
-            break;
-
-        case "quiz":
-            modalBody.innerHTML = `
-                <div class="quiz">
-                    <h3>❓ ${entry.title || ""}</h3>
-                    <p>${entry.question || ""}</p>
-                    <details>
-                        <summary>Reveal answer</summary>
-                        <p>${entry.answer || ""}</p>
-                    </details>
-                </div>
-            `;
-            break;
-
-        default:
-            modalBody.innerHTML = `<p>${entry.text || ""}</p>`;
-    }
-
-    modal.classList.remove("hidden");
-}
-
-// ----------------------
-// COUNTDOWN (BERLIN SAFE)
-// ----------------------
-
-function updateCountdown() {
-
-    if (!countdownEl) return;
-
-    const today = new Date();
-
-    const todayTs = toBerlinMidnightTimestamp(today);
-    const weddingTs = toBerlinMidnightTimestamp(weddingDate);
-
-    const diffDays = Math.ceil((weddingTs - todayTs) / (1000 * 60 * 60 * 24));
-
-    countdownEl.textContent =
-        `${diffDays} days until we get married ❤️`;
 }
