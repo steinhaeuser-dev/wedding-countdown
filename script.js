@@ -1,18 +1,4 @@
-const entry = content[day];
-
-if (!entry) {
-    modalTitle.textContent = `Day ${day}`;
-    modalBody.innerHTML =
-        "❤️ A surprise is still being prepared.";
-    modal.classList.remove("hidden");
-    return;
-}
-
-modalTitle.textContent = entry.title;
-modalBody.innerHTML =
-    `<p>${entry.text}</p>`;
-
-modal.classList.remove("hidden");const weddingDate = new Date("2026-07-17");
+const weddingDate = new Date("2026-07-17");
 const startDate = new Date("2026-06-24");
 
 const calendar = document.getElementById("calendar");
@@ -73,16 +59,67 @@ function createCalendar(content) {
                 return;
             }
 
-            const entry = content[day];
+const entry = content[day];
 
-            if (!entry) {
+modalTitle.textContent = entry?.title || `Day ${day}`;
 
-                modalTitle.textContent = `Day ${day}`;
+if (!entry) {
+    modalBody.innerHTML =
+        "❤️ Something beautiful is still being prepared for you.";
+    modal.classList.remove("hidden");
+    return;
+}
 
-                modalBody.innerHTML =
-                    "❤️ A surprise is still being prepared.";
+switch (entry.type) {
 
-                modal.classList.remove("hidden");
+    case "coupon":
+        modalBody.innerHTML = `
+            <div class="coupon">
+                <h3>🎟 ${entry.title}</h3>
+                <p>${entry.text}</p>
+                <small>Redeem anytime ❤️</small>
+            </div>
+        `;
+        break;
+
+    case "memory":
+        modalBody.innerHTML = `
+            <div class="memory">
+                ${entry.photo ? `<img src="${entry.photo}" style="width:100%; border-radius:12px;" />` : ""}
+                <p>${entry.text || ""}</p>
+            </div>
+        `;
+        break;
+
+    case "audio":
+        modalBody.innerHTML = `
+            <div class="audio">
+                <p>${entry.text || ""}</p>
+                <audio controls>
+                    <source src="${entry.audio}" type="audio/mpeg">
+                </audio>
+            </div>
+        `;
+        break;
+
+    case "quiz":
+        modalBody.innerHTML = `
+            <div class="quiz">
+                <h3>❓ ${entry.title}</h3>
+                <p>${entry.question}</p>
+                <details>
+                    <summary>Reveal answer</summary>
+                    <p>${entry.answer}</p>
+                </details>
+            </div>
+        `;
+        break;
+
+    default:
+        modalBody.innerHTML = `<p>${entry.text}</p>`;
+}
+
+modal.classList.remove("hidden");
 
                 return;
             }
