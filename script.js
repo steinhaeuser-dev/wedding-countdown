@@ -59,9 +59,9 @@ function getDayNumber(start, today) {
 
     const diff = Math.round((todayDateObj - startDateObj) / (1000 * 60 * 60 * 24));
 
-    return Math.max(1, diff + 1); // Day 1 = start date
+    // Clamp so nothing happens before Day 1
+    return Math.max(1, diff + 1);
 }
-
 // ----------------------
 // LOAD CONTENT
 // ----------------------
