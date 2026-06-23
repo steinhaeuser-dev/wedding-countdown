@@ -3,11 +3,27 @@ console.log("💍 Wedding script loaded");
 // ----------------------
 // SAFE DATE SETUP (NO TIMEZONE BUGS)
 // ----------------------
+
+// IMPORTANT: JS months are 0-based (June = 5, July = 6)
 const weddingDate = new Date(2026, 6, 17); // July 17, 2026
 const startDate = new Date(2026, 5, 24);   // June 24, 2026
 
 weddingDate.setHours(0, 0, 0, 0);
 startDate.setHours(0, 0, 0, 0);
+
+// ----------------------
+// BERLIN TIME HELPERS (CRITICAL FIX)
+// ----------------------
+
+// Converts any date into a stable Berlin calendar day string (YYYY-MM-DD)
+function toBerlinDayString(date) {
+    return new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Europe/Berlin",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+    }).format(date);
+}
 
 // ----------------------
 // DOM ELEMENTS
@@ -32,16 +48,17 @@ closeBtn.addEventListener("click", () => {
 });
 
 // ----------------------
-// DAY CALCULATION (FIXED + RELIABLE)
+// DAY CALCULATION (BERLIN SAFE)
 // ----------------------
 function getDayNumber(start, today) {
-    const s = new Date(start);
-    const t = new Date(today);
+    const startStr = toBerlinDayString(start);
+    const todayStr = toBerlinDayString(today);
 
-    s.setHours(0, 0, 0, 0);
-    t.setHours(0, 0, 0, 0);
+    const startDateObj = new Date(startStr);
+    const todayDateObj = new Date(todayStr);
 
-    const diff = Math.round((t - s) / (1000 * 60 * 60 * 24));
+    const diff = Math.round((todayDateObj - startDateObj) / (1000 * 60 * 60 * 24));
+
     return diff + 1; // Day 1 = start date
 }
 
@@ -185,19 +202,20 @@ function renderEntry(entry, day) {
 }
 
 // ----------------------
-// COUNTDOWN
+// COUNTDOWN (BERLIN SAFE)
 // ----------------------
 function updateCountdown() {
 
     if (!countdownEl) return;
 
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const todayStr = toBerlinDayString(today);
+    const weddingStr = toBerlinDayString(weddingDate);
 
-    const wedding = new Date(weddingDate);
-    wedding.setHours(0, 0, 0, 0);
+    const todayDate = new Date(todayStr);
+    const wedding = new Date(weddingStr);
 
-    const diffDays = Math.ceil((wedding - today) / (1000 * 60 * 60 * 24));
+    const diffDays = Math.ceil((wedding - todayDate) / (1000 * 60 * 60 * 24));
 
     countdownEl.textContent =
         `${diffDays} days until we get married ❤️`;
