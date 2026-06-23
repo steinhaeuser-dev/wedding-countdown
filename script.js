@@ -1,19 +1,25 @@
+console.log("💍 Wedding script loaded");
+
 const weddingDate = new Date("2026-07-17");
 const startDate = new Date("2026-06-24");
 
 const calendar = document.getElementById("calendar");
-
 const modal = document.getElementById("modal");
 const modalTitle = document.getElementById("modalTitle");
 const modalBody = document.getElementById("modalBody");
-
 const closeBtn = document.getElementById("closeBtn");
 
-closeBtn.onclick = () => {
-    modal.classList.add("hidden");
-};
+// safety checks (VERY important for mobile)
+if (!calendar || !modal || !modalTitle || !modalBody || !closeBtn) {
+    console.error("❌ Missing DOM elements. Script stopped.");
+}
 
-// Load content safely
+// close modal safely
+closeBtn?.addEventListener("click", () => {
+    modal.classList.add("hidden");
+});
+
+// load content
 fetch("./content.json")
     .then(r => {
         if (!r.ok) throw new Error("content.json not found");
@@ -22,7 +28,7 @@ fetch("./content.json")
     .then(data => createCalendar(data))
     .catch(err => {
         console.error("Failed to load content:", err);
-        createCalendar({}); // fallback so UI still works
+        createCalendar({});
     });
 
 function createCalendar(content = {}) {
@@ -33,14 +39,14 @@ function createCalendar(content = {}) {
         (today - startDate) / (1000 * 60 * 60 * 24)
     ) + 1;
 
-    calendar.innerHTML = ""; // safety reset
+    calendar.innerHTML = "";
 
     for (let day = 1; day <= 24; day++) {
 
         const btn = document.createElement("button");
         btn.classList.add("door");
 
-        // --- visual state ---
+        // --- state ---
         if (day < diff) {
             btn.classList.add("opened");
             btn.innerHTML = `<span>${day} ✔</span>`;
@@ -54,80 +60,23 @@ function createCalendar(content = {}) {
             btn.innerHTML = `<span>${day}</span>`;
         }
 
-        // --- click handler ---
-        btn.onclick = () => {
+        // --- click ---
+        btn.addEventListener("click", () => {
 
             const entry = content[day];
 
-            modalTitle.textContent = entry?.title || `Day ${day}`;
-
-            // locked future day
             if (day > diff) {
-                modalBody.innerHTML = "🔒 Come back later.";
-                modal.classList.remove("hidden");
+                openModal(`Day ${day}`, "🔒 Come back later.");
                 return;
             }
 
-            // empty content
             if (!entry) {
-                modalBody.innerHTML =
-                    "❤️ Something beautiful is still being prepared for you.";
-                modal.classList.remove("hidden");
+                openModal(`Day ${day}`, "❤️ Something beautiful is still being prepared for you.");
                 return;
             }
 
-            // render by type
-            switch (entry.type) {
-
-                case "coupon":
-                    modalBody.innerHTML = `
-                        <div class="coupon">
-                            <h3>🎟 ${entry.title}</h3>
-                            <p>${entry.text}</p>
-                            <small>Redeem anytime ❤️</small>
-                        </div>
-                    `;
-                    break;
-
-                case "memory":
-                    modalBody.innerHTML = `
-                        <div class="memory">
-                            ${entry.photo ? `<img src="${entry.photo}" style="width:100%; border-radius:12px;" />` : ""}
-                            <p>${entry.text || ""}</p>
-                        </div>
-                    `;
-                    break;
-
-                case "audio":
-                    modalBody.innerHTML = `
-                        <div class="audio">
-                            <p>${entry.text || ""}</p>
-                            <audio controls>
-                                <source src="${entry.audio}" type="audio/mpeg">
-                            </audio>
-                        </div>
-                    `;
-                    break;
-
-                case "quiz":
-                    modalBody.innerHTML = `
-                        <div class="quiz">
-                            <h3>❓ ${entry.title}</h3>
-                            <p>${entry.question}</p>
-                            <details>
-                                <summary>Reveal answer</summary>
-                                <p>${entry.answer}</p>
-                            </details>
-                        </div>
-                    `;
-                    break;
-
-                default:
-                    modalBody.innerHTML = `<p>${entry.text || ""}</p>`;
-            }
-
-            modal.classList.remove("hidden");
-        };
+            renderEntry(entry, day);
+        });
 
         calendar.appendChild(btn);
     }
@@ -135,6 +84,71 @@ function createCalendar(content = {}) {
     updateCountdown();
 }
 
+// modal helper
+function openModal(title, body) {
+    modalTitle.textContent = title;
+    modalBody.innerHTML = body;
+    modal.classList.remove("hidden");
+}
+
+// render content types
+function renderEntry(entry, day) {
+
+    modalTitle.textContent = entry.title || `Day ${day}`;
+
+    switch (entry.type) {
+
+        case "coupon":
+            modalBody.innerHTML = `
+                <div class="coupon">
+                    <h3>🎟 ${entry.title}</h3>
+                    <p>${entry.text}</p>
+                    <small>Redeem anytime ❤️</small>
+                </div>
+            `;
+            break;
+
+        case "memory":
+            modalBody.innerHTML = `
+                <div class="memory">
+                    ${entry.photo ? `<img src="${entry.photo}" />` : ""}
+                    <p>${entry.text || ""}</p>
+                </div>
+            `;
+            break;
+
+        case "audio":
+            modalBody.innerHTML = `
+                <div class="audio">
+                    <p>${entry.text || ""}</p>
+                    <audio controls>
+                        <source src="${entry.audio}" type="audio/mpeg">
+                    </audio>
+                </div>
+            `;
+            break;
+
+        case "quiz":
+            modalBody.innerHTML = `
+                <div class="quiz">
+                    <h3>❓ ${entry.title}</h3>
+                    <p>${entry.question}</p>
+                    <details>
+                        <summary>Reveal answer</summary>
+                        <p>${entry.answer}</p>
+                    </details>
+                </div>
+            `;
+            break;
+
+        default:
+            modalBody.innerHTML = `<p>${entry.text || ""}</p>`;
+    }
+
+    modal.classList.remove("hidden");
+}
+
+// countdown
 function updateCountdown() {
 
     const today = new Date();
@@ -143,6 +157,9 @@ function updateCountdown() {
         (weddingDate - today) / (1000 * 60 * 60 * 24)
     );
 
-    document.getElementById("countdown").innerText =
-        `${days} days until we get married ❤️`;
+    const el = document.getElementById("countdown");
+
+    if (el) {
+        el.innerText = `${days} days until we get married ❤️`;
+    }
 }
