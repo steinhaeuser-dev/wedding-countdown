@@ -7,33 +7,8 @@ console.log("💍 Wedding script loaded");
         timeZone: "Europe/Berlin",
         totalDays: 24,
         firstOpenDate: { year: 2026, month: 6, day: 23 }, // June 23, 2026
-        weddingDate: { year: 2026, month: 7, day: 17 }    // July 17, 2026
-    };
-
-    const CONTENT = {
-        "1": {
-            type: "memory",
-            title: "The Day Everything Changed 💍",
-            text: "Unser erstes gemeinsames Foto als Verlobte 💍",
-            photo: "./photos/day1.jpg"
-        },
-        "2": {
-            type: "coupon",
-            title: "Love Coupon",
-            text: "A kiss anytime you want 💋"
-        },
-        "3": {
-            type: "quiz",
-            title: "Our First Date",
-            question: "Where did we go on our first date?",
-            answer: "You already know 😏"
-        },
-        "4": {
-            type: "audio",
-            title: "A Message For You",
-            text: "Close your eyes and listen ❤️",
-            audio: "./audio/day4.mp3"
-        }
+        weddingDate: { year: 2026, month: 7, day: 17 },   // July 17, 2026
+        contentUrl: "./content.json?v=20260623-1"
     };
 
     const els = {
@@ -175,7 +150,7 @@ console.log("💍 Wedding script loaded");
         document.body.classList.add("no-scroll");
     }
 
-    function buildDoor(day) {
+    function buildDoor(day, content) {
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "door";
@@ -202,7 +177,7 @@ console.log("💍 Wedding script loaded");
                 return;
             }
 
-            const entry = CONTENT[String(day)];
+            const entry = content[String(day)];
 
             if (!entry) {
                 openModal(`Day ${day}`, "<p>❤️ Something beautiful is still being prepared for you.</p>");
@@ -215,10 +190,26 @@ console.log("💍 Wedding script loaded");
         return btn;
     }
 
-    function renderCalendar() {
+    function renderCalendar(content = {}) {
         els.calendar.innerHTML = "";
+
         for (let day = 1; day <= CONFIG.totalDays; day++) {
-            els.calendar.appendChild(buildDoor(day));
+            els.calendar.appendChild(buildDoor(day, content));
+        }
+    }
+
+    async function loadContent() {
+        try {
+            const res = await fetch(CONFIG.contentUrl, { cache: "no-store" });
+            if (!res.ok) {
+                throw new Error(`HTTP ${res.status}`);
+            }
+
+            const data = await res.json();
+            return data && typeof data === "object" ? data : {};
+        } catch (error) {
+            console.error("Failed to load content.json:", error);
+            return {};
         }
     }
 
@@ -238,16 +229,19 @@ console.log("💍 Wedding script loaded");
         });
     }
 
-    function init() {
+    async function init() {
         bindEvents();
         updateCountdown();
-        renderCalendar();
+        renderCalendar({});
+
+        const content = await loadContent();
+        renderCalendar(content);
+        updateCountdown();
     }
 
-    try {
-        init();
-    } catch (error) {
-        console.error("❌ Script crashed:", error);
-        els.countdown.textContent = "Countdown unavailable ❤️";
-    }
+    init().catch((error) => {
+        console.error("Unexpected init error:", error);
+        updateCountdown();
+        renderCalendar({});
+    });
 })();
