@@ -82,6 +82,10 @@ audio {
     transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
 }
 
+.door:hover {
+    transform: scale(1.03);
+}
+
 .door:active {
     transform: scale(0.97);
 }
