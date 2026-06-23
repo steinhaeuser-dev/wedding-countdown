@@ -2,7 +2,7 @@
   "1": {
     "type": "memory",
     "title": "The Day Everything Changed 💍",
-    "text": "Unser erstes gemeinsames Fotos als Verlobte 💍",
-    "photo": "photos/day1.jpg"
+    "text": "Unser erstes gemeinsames Foto als Verlobte 💍",
+    "photo": "./photos/day1.jpg"
   }
 }
