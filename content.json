@@ -12,3 +12,36 @@
     "text": "One breakfast in bed 🍳❤️"
   }
 }
+{
+  "1": {
+    "type": "message",
+    "title": "The Adventure Begins",
+    "text": "Only 24 days until we get married ❤️"
+  },
+
+  "2": {
+    "type": "coupon",
+    "title": "Breakfast in Bed",
+    "text": "One full breakfast served with love 🍳❤️"
+  },
+
+  "3": {
+    "type": "memory",
+    "title": "A Memory",
+    "text": "One of my favorite moments with you.",
+    "photo": "photos/day3.jpg"
+  },
+
+  "4": {
+    "type": "quiz",
+    "title": "Couple Quiz",
+    "question": "Where was our first real date?",
+    "answer": "You already know the answer 😉"
+  },
+
+  "5": {
+    "type": "message",
+    "title": "Something I Love About You",
+    "text": "I love how you make ordinary days feel special."
+  }
+}
