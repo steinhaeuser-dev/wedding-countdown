@@ -57,11 +57,7 @@ else {
 
                 modalBody.innerHTML =
                     "🔒 Come back later.";
-
-                modal.classList.remove("hidden");
-
-                return;
-            }
+}
 
 const entry = content[day];
 
