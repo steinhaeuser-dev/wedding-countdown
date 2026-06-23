@@ -6,9 +6,34 @@ console.log("💍 Wedding script loaded");
     const CONFIG = {
         timeZone: "Europe/Berlin",
         totalDays: 24,
-        firstOpenDate: { year: 2026, month: 6, day: 23 },
-        weddingDate: { year: 2026, month: 7, day: 17 },
-        contentUrl: "./content.json"
+        firstOpenDate: { year: 2026, month: 6, day: 23 }, // June 23, 2026
+        weddingDate: { year: 2026, month: 7, day: 17 }    // July 17, 2026
+    };
+
+    const CONTENT = {
+        "1": {
+            type: "memory",
+            title: "The Day Everything Changed 💍",
+            text: "Unser erstes gemeinsames Foto als Verlobte 💍",
+            photo: "./photos/day1.jpg"
+        },
+        "2": {
+            type: "coupon",
+            title: "Love Coupon",
+            text: "A kiss anytime you want 💋"
+        },
+        "3": {
+            type: "quiz",
+            title: "Our First Date",
+            question: "Where did we go on our first date?",
+            answer: "You already know 😏"
+        },
+        "4": {
+            type: "audio",
+            title: "A Message For You",
+            text: "Close your eyes and listen ❤️",
+            audio: "./audio/day4.mp3"
+        }
     };
 
     const els = {
@@ -21,7 +46,7 @@ console.log("💍 Wedding script loaded");
     };
 
     if (!els.calendar || !els.modal || !els.modalTitle || !els.modalBody || !els.closeBtn || !els.countdown) {
-        console.error("Missing required DOM elements");
+        console.error("❌ Missing required DOM elements");
         return;
     }
 
@@ -51,8 +76,8 @@ console.log("💍 Wedding script loaded");
 
     function getUnlockedDay() {
         const todayMs = getTodayBerlinMs();
-        const startMs = toUtcMidnightMs(CONFIG.firstOpenDate);
-        const diffDays = Math.floor((todayMs - startMs) / 86400000);
+        const firstOpenMs = toUtcMidnightMs(CONFIG.firstOpenDate);
+        const diffDays = Math.floor((todayMs - firstOpenMs) / 86400000);
         return Math.max(1, Math.min(CONFIG.totalDays, diffDays + 1));
     }
 
@@ -62,11 +87,6 @@ console.log("💍 Wedding script loaded");
         return Math.max(0, Math.ceil((weddingMs - todayMs) / 86400000));
     }
 
-    function updateCountdown() {
-        const daysLeft = getDaysUntilWedding();
-        els.countdown.textContent = `${daysLeft} days until we get married ❤️`;
-    }
-
     function escapeHtml(value = "") {
         return String(value)
             .replace(/&/g, "&amp;")
@@ -74,6 +94,11 @@ console.log("💍 Wedding script loaded");
             .replace(/>/g, "&gt;")
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#39;");
+    }
+
+    function updateCountdown() {
+        const daysLeft = getDaysUntilWedding();
+        els.countdown.textContent = `${daysLeft} days until we get married ❤️`;
     }
 
     function openModal(title, html) {
@@ -121,7 +146,7 @@ console.log("💍 Wedding script loaded");
                         ${entry.audio ? `
                             <audio controls preload="none">
                                 <source src="${entry.audio}" type="audio/mpeg">
-                                Your browser does not support audio playback.
+                                Your browser does not support the audio element.
                             </audio>
                         ` : "<p>Audio file missing.</p>"}
                     </div>
@@ -150,11 +175,13 @@ console.log("💍 Wedding script loaded");
         document.body.classList.add("no-scroll");
     }
 
-    function buildDoor(day, unlockedDay, content) {
+    function buildDoor(day) {
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "door";
         btn.setAttribute("aria-label", `Open day ${day}`);
+
+        const unlockedDay = getUnlockedDay();
 
         if (day < unlockedDay) {
             btn.classList.add("opened");
@@ -175,7 +202,7 @@ console.log("💍 Wedding script loaded");
                 return;
             }
 
-            const entry = content[String(day)];
+            const entry = CONTENT[String(day)];
 
             if (!entry) {
                 openModal(`Day ${day}`, "<p>❤️ Something beautiful is still being prepared for you.</p>");
@@ -188,23 +215,10 @@ console.log("💍 Wedding script loaded");
         return btn;
     }
 
-    function renderCalendar(content = {}) {
-        const unlockedDay = getUnlockedDay();
+    function renderCalendar() {
         els.calendar.innerHTML = "";
-
         for (let day = 1; day <= CONFIG.totalDays; day++) {
-            els.calendar.appendChild(buildDoor(day, unlockedDay, content));
-        }
-    }
-
-    async function loadContent() {
-        try {
-            const res = await fetch(CONFIG.contentUrl, { cache: "no-store" });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            return await res.json();
-        } catch (error) {
-            console.error("Could not load content.json:", error);
-            return {};
+            els.calendar.appendChild(buildDoor(day));
         }
     }
 
@@ -212,26 +226,28 @@ console.log("💍 Wedding script loaded");
         els.closeBtn.addEventListener("click", closeModal);
 
         els.modal.addEventListener("click", (event) => {
-            if (event.target === els.modal) closeModal();
+            if (event.target === els.modal) {
+                closeModal();
+            }
         });
 
         document.addEventListener("keydown", (event) => {
-            if (event.key === "Escape") closeModal();
+            if (event.key === "Escape") {
+                closeModal();
+            }
         });
     }
 
-    async function init() {
+    function init() {
         bindEvents();
         updateCountdown();
-        renderCalendar({});
-        const content = await loadContent();
-        renderCalendar(content);
-        updateCountdown();
+        renderCalendar();
     }
 
-    init().catch((error) => {
-        console.error("Init failed:", error);
-        updateCountdown();
-        renderCalendar({});
-    });
+    try {
+        init();
+    } catch (error) {
+        console.error("❌ Script crashed:", error);
+        els.countdown.textContent = "Countdown unavailable ❤️";
+    }
 })();
