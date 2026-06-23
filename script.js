@@ -1,4 +1,18 @@
-const weddingDate = new Date("2026-07-17");
+const entry = content[day];
+
+if (!entry) {
+    modalTitle.textContent = `Day ${day}`;
+    modalBody.innerHTML =
+        "❤️ A surprise is still being prepared.";
+    modal.classList.remove("hidden");
+    return;
+}
+
+modalTitle.textContent = entry.title;
+modalBody.innerHTML =
+    `<p>${entry.text}</p>`;
+
+modal.classList.remove("hidden");const weddingDate = new Date("2026-07-17");
 const startDate = new Date("2026-06-24");
 
 const calendar = document.getElementById("calendar");
