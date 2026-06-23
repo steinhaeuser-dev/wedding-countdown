@@ -6,7 +6,7 @@ console.log("💍 Wedding script loaded");
 
 // JS months are 0-based: June = 5, July = 6
 const weddingDate = new Date(2026, 6, 17); // July 17, 2026
-const startDate = new Date(2026, 5, 24);   // June 24, 2026
+const startDate = new Date(2026, 5, 24);    // June 24, 2026
 
 weddingDate.setHours(0, 0, 0, 0);
 startDate.setHours(0, 0, 0, 0);
@@ -15,7 +15,7 @@ startDate.setHours(0, 0, 0, 0);
 // BERLIN DAY NORMALIZER
 // ----------------------
 
-function toBerlinMidnightTimestamp(date) {
+function toBerlinDateParts(date) {
     const parts = new Intl.DateTimeFormat("en-CA", {
         timeZone: "Europe/Berlin",
         year: "numeric",
@@ -23,10 +23,15 @@ function toBerlinMidnightTimestamp(date) {
         day: "2-digit",
     }).formatToParts(date);
 
-    const year = Number(parts.find(p => p.type === "year").value);
-    const month = Number(parts.find(p => p.type === "month").value);
-    const day = Number(parts.find(p => p.type === "day").value);
+    return {
+        year: Number(parts.find(p => p.type === "year").value),
+        month: Number(parts.find(p => p.type === "month").value),
+        day: Number(parts.find(p => p.type === "day").value),
+    };
+}
 
+function toBerlinMidnightTimestamp(date) {
+    const { year, month, day } = toBerlinDateParts(date);
     return Date.UTC(year, month - 1, day);
 }
 
@@ -34,10 +39,12 @@ function getDayNumber(start, today) {
     const startTs = toBerlinMidnightTimestamp(start);
     const todayTs = toBerlinMidnightTimestamp(today);
 
-    const diff = (todayTs - startTs) / (1000 * 60 * 60 * 24);
+    const diff = Math.floor((todayTs - startTs) / (1000 * 60 * 60 * 24));
 
-    // FIX: prevents off-by-one and pre-start issues
-    return Math.max(1, Math.floor(diff) + 1);
+    // Before or on the start date, show day 1
+    if (diff <= 0) return 1;
+
+    return diff + 1;
 }
 
 // ----------------------
@@ -79,18 +86,16 @@ fetch("./content.json")
     });
 
 // ----------------------
-// CREATE CALENDAR (FIXED)
+// CREATE CALENDAR
 // ----------------------
 
 function createCalendar(content = {}) {
-
     const today = new Date();
     const diffDays = getDayNumber(startDate, today);
 
     calendar.innerHTML = "";
 
     for (let day = 1; day <= 24; day++) {
-
         const btn = document.createElement("button");
         btn.className = "door";
 
@@ -109,11 +114,9 @@ function createCalendar(content = {}) {
         }
 
         btn.addEventListener("click", () => {
-
             const currentDiff = getDayNumber(startDate, new Date());
-            const isFutureDay = day > currentDiff;
 
-            if (isFutureDay) {
+            if (day > currentDiff) {
                 openModal(`Day ${day}`, "🔒 Come back later.");
                 return;
             }
@@ -152,11 +155,9 @@ function openModal(title, body) {
 // ----------------------
 
 function renderEntry(entry, day) {
-
     modalTitle.textContent = entry.title || `Day ${day}`;
 
     switch (entry.type) {
-
         case "memory":
             modalBody.innerHTML = `
                 <div class="memory">
@@ -212,7 +213,6 @@ function renderEntry(entry, day) {
 // ----------------------
 
 function updateCountdown() {
-
     if (!countdownEl) return;
 
     const todayTs = toBerlinMidnightTimestamp(new Date());
@@ -220,6 +220,5 @@ function updateCountdown() {
 
     const diffDays = Math.ceil((weddingTs - todayTs) / (1000 * 60 * 60 * 24));
 
-    countdownEl.textContent =
-        `${diffDays} days until we get married ❤️`;
+    countdownEl.textContent = `${diffDays} days until we get married ❤️`;
 }
