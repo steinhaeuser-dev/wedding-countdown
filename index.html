@@ -1,40 +1,215 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+console.log("💍 Wedding script loaded");
 
-    <title>Our Wedding Countdown ❤️</title>
+(() => {
+    const TIMEZONE = "Europe/Berlin";
+    const TOTAL_DAYS = 24;
+    const START_DATE = new Date(2026, 5, 24);   // June 24, 2026
+    const WEDDING_DATE = new Date(2026, 6, 17); // July 17, 2026
 
-    <link rel="stylesheet" href="style.css" />
-</head>
+    const calendar = document.getElementById("calendar");
+    const modal = document.getElementById("modal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalBody = document.getElementById("modalBody");
+    const closeBtn = document.getElementById("closeBtn");
+    const countdownEl = document.getElementById("countdown");
 
-<body>
+    if (!calendar || !modal || !modalTitle || !modalBody || !closeBtn || !countdownEl) {
+        console.error("❌ Missing required DOM elements");
+        return;
+    }
 
-    <header>
-        <h1>💍 Our Wedding Countdown</h1>
-        <p id="countdown">Loading countdown...</p>
-    </header>
+    function getBerlinDateParts(date = new Date()) {
+        const parts = new Intl.DateTimeFormat("en-CA", {
+            timeZone: TIMEZONE,
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit"
+        }).formatToParts(date);
 
-    <main>
-        <div id="calendar" class="calendar"></div>
-    </main>
+        return {
+            year: Number(parts.find(p => p.type === "year").value),
+            month: Number(parts.find(p => p.type === "month").value),
+            day: Number(parts.find(p => p.type === "day").value)
+        };
+    }
 
-    <!-- Modal -->
-    <div id="modal" class="modal hidden">
-        <div class="modal-content">
+    function getBerlinMidnightTimestamp(date = new Date()) {
+        const { year, month, day } = getBerlinDateParts(date);
+        return Date.UTC(year, month - 1, day);
+    }
 
-            <button id="closeBtn" aria-label="Close">×</button>
+    function getCurrentDayNumber() {
+        const startTs = getBerlinMidnightTimestamp(START_DATE);
+        const todayTs = getBerlinMidnightTimestamp(new Date());
+        const diffDays = Math.floor((todayTs - startTs) / 86400000);
 
-            <h2 id="modalTitle"></h2>
+        return Math.max(1, Math.min(TOTAL_DAYS, diffDays + 1));
+    }
 
-            <div id="modalBody"></div>
+    function getDaysUntilWedding() {
+        const todayTs = getBerlinMidnightTimestamp(new Date());
+        const weddingTs = getBerlinMidnightTimestamp(WEDDING_DATE);
+        return Math.max(0, Math.ceil((weddingTs - todayTs) / 86400000));
+    }
 
-        </div>
-    </div>
+    function updateCountdown() {
+        const daysLeft = getDaysUntilWedding();
+        countdownEl.textContent = `${daysLeft} days until we get married ❤️`;
+    }
 
-    <!-- Scripts (defer prevents timing issues) -->
-    <script src="script.js" defer></script>
+    function openModal(title, html) {
+        modalTitle.textContent = title;
+        modalBody.innerHTML = html;
+        modal.classList.remove("hidden");
+    }
 
-</body>
-</html>
+    function closeModal() {
+        modal.classList.add("hidden");
+    }
+
+    function escapeHtml(value = "") {
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#39;");
+    }
+
+    function renderEntry(entry, day) {
+        const title = entry?.title || `Day ${day}`;
+        modalTitle.textContent = title;
+
+        switch (entry?.type) {
+            case "memory":
+                modalBody.innerHTML = `
+                    <div class="memory">
+                        ${entry.photo ? `<img src="${entry.photo}" alt="${escapeHtml(title)}">` : ""}
+                        <p>${escapeHtml(entry.text || "")}</p>
+                    </div>
+                `;
+                break;
+
+            case "coupon":
+                modalBody.innerHTML = `
+                    <div class="coupon">
+                        <h3>🎟 ${escapeHtml(title)}</h3>
+                        <p>${escapeHtml(entry.text || "")}</p>
+                        <small>Redeem anytime ❤️</small>
+                    </div>
+                `;
+                break;
+
+            case "audio":
+                modalBody.innerHTML = `
+                    <div class="audio">
+                        <p>${escapeHtml(entry.text || "")}</p>
+                        ${entry.audio ? `
+                            <audio controls>
+                                <source src="${entry.audio}" type="audio/mpeg">
+                                Your browser does not support audio playback.
+                            </audio>
+                        ` : ""}
+                    </div>
+                `;
+                break;
+
+            case "quiz":
+                modalBody.innerHTML = `
+                    <div class="quiz">
+                        <h3>❓ ${escapeHtml(title)}</h3>
+                        <p>${escapeHtml(entry.question || "")}</p>
+                        <details>
+                            <summary>Reveal answer</summary>
+                            <p>${escapeHtml(entry.answer || "")}</p>
+                        </details>
+                    </div>
+                `;
+                break;
+
+            default:
+                modalBody.innerHTML = `<p>${escapeHtml(entry?.text || "❤️ Something beautiful is still being prepared for you.")}</p>`;
+        }
+
+        modal.classList.remove("hidden");
+    }
+
+    function createCalendar(content = {}) {
+        const currentDay = getCurrentDayNumber();
+        calendar.innerHTML = "";
+
+        for (let day = 1; day <= TOTAL_DAYS; day++) {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "door";
+
+            const isPast = day < currentDay;
+            const isToday = day === currentDay;
+            const isFuture = day > currentDay;
+
+            if (isPast) {
+                btn.classList.add("opened");
+                btn.innerHTML = `<span>${day} ✔</span>`;
+            } else if (isToday) {
+                btn.classList.add("today");
+                btn.innerHTML = `<span>${day} ✨</span>`;
+            } else if (isFuture) {
+                btn.classList.add("locked");
+                btn.innerHTML = `<span>${day}</span>`;
+            }
+
+            btn.addEventListener("click", () => {
+                const liveCurrentDay = getCurrentDayNumber();
+
+                if (day > liveCurrentDay) {
+                    openModal(`Day ${day}`, "<p>🔒 Come back later.</p>");
+                    return;
+                }
+
+                const entry = content[String(day)];
+
+                if (!entry) {
+                    openModal(`Day ${day}`, "<p>❤️ Something beautiful is still being prepared for you.</p>");
+                    return;
+                }
+
+                renderEntry(entry, day);
+            });
+
+            calendar.appendChild(btn);
+        }
+    }
+
+    async function loadContent() {
+        try {
+            const response = await fetch("./content.json", { cache: "no-store" });
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            return await response.json();
+        } catch (error) {
+            console.error("Failed to load content.json:", error);
+            return {};
+        }
+    }
+
+    async function init() {
+        updateCountdown();
+        createCalendar({});
+
+        closeBtn.addEventListener("click", closeModal);
+        modal.addEventListener("click", (event) => {
+            if (event.target === modal) closeModal();
+        });
+
+        const content = await loadContent();
+        createCalendar(content);
+        updateCountdown();
+    }
+
+    init().catch((error) => {
+        console.error("Script init failed:", error);
+        updateCountdown();
+        createCalendar({});
+    });
+})();
