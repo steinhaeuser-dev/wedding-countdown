@@ -83,3 +83,22 @@ h1 {
     background: none;
     font-size: 30px;
 }
+.coupon {
+    background: linear-gradient(135deg, #d4af37, #f5e6a3);
+    padding: 20px;
+    border-radius: 16px;
+    color: #2f2f2f;
+    text-align: center;
+}
+
+.memory img {
+    margin-bottom: 10px;
+}
+
+.audio {
+    text-align: center;
+}
+
+.quiz {
+    text-align: center;
+}
