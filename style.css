@@ -102,3 +102,19 @@ h1 {
 .quiz {
     text-align: center;
 }
+.today {
+    box-shadow: 0 0 18px rgba(212, 175, 55, 0.9);
+    transform: scale(1.05);
+    border: 1px solid #d4af37;
+    animation: pulse 1.8s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 10px rgba(212,175,55,0.4); }
+    50% { box-shadow: 0 0 22px rgba(212,175,55,0.9); }
+    100% { box-shadow: 0 0 10px rgba(212,175,55,0.4); }
+}
+
+.opened {
+    opacity: 0.7;
+}
