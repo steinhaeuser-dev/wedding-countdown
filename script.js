@@ -110,7 +110,7 @@ console.log("💍 Hochzeitsskript geladen");
                 "du hast wunderschöne Rehaugen"
             ];
 
-        for (let i = 0; i < 24; i++) {
+        for (let i = 0; i < 18; i++) {
             const item = document.createElement("div");
             item.className = "compliment-drop";
             item.textContent = phrases[i % phrases.length];
