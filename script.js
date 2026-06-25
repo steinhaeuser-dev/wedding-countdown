@@ -171,7 +171,11 @@ console.log("💍 Hochzeitsskript geladen");
                     </div>
                 `;
                 break;
-
+                
+            case "wedding-quiz-3":
+                renderWeddingQuiz(entry, day);
+                return;
+                
             case "quiz":
                 els.modalBody.innerHTML = `
                     <div class="quiz">
@@ -213,7 +217,86 @@ console.log("💍 Hochzeitsskript geladen");
             }
         }
     }
+    function renderWeddingQuiz(entry, day) {
+    const questions = entry?.questions || [];
+    let currentStep = 0;
+    const chosenAnswers = [];
 
+    function renderStep() {
+        const q = questions[currentStep];
+
+        if (!q) {
+            renderFinalCoupon();
+            return;
+        }
+
+        els.modalTitle.textContent = entry.title || `Tag ${day}`;
+
+        const optionsHtml = (q.options || []).map((option, index) => `
+            <label class="quiz-option">
+                <input type="radio" name="quiz-step" value="${escapeHtml(option)}">
+                <span>${escapeHtml(option)}</span>
+            </label>
+        `).join("");
+
+        els.modalBody.innerHTML = `
+            <div class="quiz-3-step">
+                <div class="quiz-progress">Frage ${currentStep + 1} von ${questions.length}</div>
+                <h3>${escapeHtml(q.question || "")}</h3>
+                <div class="quiz-options">
+                    ${optionsHtml}
+                </div>
+                <button type="button" class="quiz-next-btn" id="quizNextBtn">
+                    Antwort prüfen
+                </button>
+                <div class="quiz-reveal hidden" id="quizRevealBox"></div>
+                <button type="button" class="quiz-next-btn hidden" id="quizContinueBtn">
+                    Weiter
+                </button>
+            </div>
+        `;
+
+        const nextBtn = document.getElementById("quizNextBtn");
+        const revealBox = document.getElementById("quizRevealBox");
+        const continueBtn = document.getElementById("quizContinueBtn");
+
+        nextBtn.addEventListener("click", () => {
+            const selected = els.modalBody.querySelector('input[name="quiz-step"]:checked');
+
+            if (!selected) {
+                revealBox.classList.remove("hidden");
+                revealBox.innerHTML = `<p>Bitte wähle erst eine Antwort aus 😊</p>`;
+                return;
+            }
+
+            chosenAnswers.push(selected.value);
+
+            revealBox.classList.remove("hidden");
+            revealBox.innerHTML = `<p>${escapeHtml(q.reveal || "")}</p>`;
+
+            nextBtn.classList.add("hidden");
+            continueBtn.classList.remove("hidden");
+        });
+
+        continueBtn.addEventListener("click", () => {
+            currentStep += 1;
+            renderStep();
+        });
+    }
+
+    function renderFinalCoupon() {
+        els.modalTitle.textContent = entry.title || `Tag ${day}`;
+        els.modalBody.innerHTML = `
+            <div class="coupon final-coupon">
+                <h3>🍗 ${escapeHtml(entry.couponTitle || "Winner, winner, chicken dinner!")}</h3>
+                <p>${escapeHtml(entry.couponText || "1x free dinner at KFC.")}</p>
+                <small>Trostpreis erfolgreich freigeschaltet ❤️</small>
+            </div>
+        `;
+    }
+
+    renderStep();
+}
     function buildDoor(day, content) {
         const btn = document.createElement("button");
         btn.type = "button";
