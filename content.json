@@ -52,10 +52,39 @@
   "Deine Nähe macht alles besser."
 ]
   },
-  "4": {
-    "type": "audio",
-    "title": "Eine Nachricht für dich",
-    "text": "Schließ die Augen und hör zu ❤️",
-    "audio": "./audio/day4.mp3"
-  }
+ "4": {
+  "type": "wedding-quiz-3",
+  "title": "Das große 3-Wochen-Hochzeitsquiz 💖",
+  "questions": [
+    {
+      "question": "Wer freut sich am meisten auf die Hochzeit?",
+      "options": [
+        "Du",
+        "Ich",
+        "Der Hund"
+      ],
+      "reveal": "Die richtige Antwort ist: „Wir beide!“ – das war leider nichts. 😘"
+    },
+    {
+      "question": "Was liebe ich an dir am meisten?",
+      "options": [
+        "Deinen Humor",
+        "Deine süßen Rehäuglein",
+        "Deinen Po"
+      ],
+      "reveal": "Leider wieder eine Niete – ich liebe alles an dir! ❤️"
+    },
+    {
+      "question": "Wie lange noch bis zur Hochzeit?",
+      "options": [
+        "Genau 3 Wochen",
+        "Viel zu lange",
+        "Wir schon verheiratet im Geiste"
+      ],
+      "reveal": "Natürlich alles richtig! Leider insgesamt nur 1 von 3 – als Trostpreis gewinnst du ein Abendessen bei KFC! 🍗"
+    }
+  ],
+  "couponTitle": "Winner, winner, chicken dinner!",
+  "couponText": "1x free dinner at KFC."
+}
 }
