@@ -485,3 +485,14 @@ summary {
 .final-coupon {
     margin-top: 6px;
 }
+.memory-intro,
+.memory-extra {
+    margin: 0 0 14px;
+    line-height: 1.6;
+}
+
+.memory-extra {
+    margin-top: 14px;
+    font-weight: 600;
+    color: var(--rose-dark);
+}
