@@ -124,7 +124,8 @@ console.log("💍 Hochzeitsskript geladen");
             item.style.left = `${left}%`;
             item.style.animationDelay = `${delay}s`;
             item.style.animationDuration = `${duration}s`;
-            item.style.transform = `translateY(-20vh) rotate(${rotate}deg) scale(${size})`;
+            item.style.setProperty("--drop-rotate", `${rotate}deg`);
+            item.style.setProperty("--drop-scale", size);
 
             shower.appendChild(item);
         }
