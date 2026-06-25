@@ -377,7 +377,7 @@ summary {
 @keyframes complimentFall {
     0% {
         opacity: 0;
-        transform: translateY(-20vh) rotate(-8deg);
+        transform: translateY(-20vh) rotate(var(--drop-rotate, -8deg)) scale(var(--drop-scale, 1));
     }
     10% {
         opacity: 0.96;
@@ -387,7 +387,7 @@ summary {
     }
     100% {
         opacity: 0;
-        transform: translateY(120vh) rotate(14deg);
+        transform: translateY(120vh) rotate(calc(var(--drop-rotate, -8deg) + 18deg)) scale(var(--drop-scale, 1));
     }
 }
 
