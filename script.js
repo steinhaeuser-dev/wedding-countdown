@@ -142,8 +142,9 @@ console.log("💍 Hochzeitsskript geladen");
             case "memory":
                 els.modalBody.innerHTML = `
                     <div class="memory">
-                        ${entry.photo ? `<img src="${entry.photo}" alt="${escapeHtml(title)}">` : ""}
-                        <p>${escapeHtml(entry.text || "")}</p>
+                        <p class="memory-intro">${escapeHtml(entry.text || "")}</p>
+                        ${entry.photo ? `<img src="${entry.photo}" alt="${escapeHtml(entry.photoAlt || title)}">` : ""}
+                        ${entry.extraText ? `<p class="memory-extra">${escapeHtml(entry.extraText)}</p>` : ""}
                     </div>
                 `;
                 break;
