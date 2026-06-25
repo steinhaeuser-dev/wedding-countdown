@@ -1,25 +1,32 @@
 {
   "1": {
     "type": "memory",
-    "title": "The Day Everything Changed 💍",
+    "title": "Der Tag, an dem sich alles verändert hat 💍",
     "text": "Unser erstes gemeinsames Foto als Verlobte 💍",
     "photo": "./photos/day1.jpg"
   },
   "2": {
     "type": "coupon",
-    "title": "Love Coupon",
-    "text": "A kiss anytime you want 💋"
+    "title": "Liebesgutschein",
+    "text": "Ein Kuss jederzeit, wenn du möchtest 💋"
   },
   "3": {
-    "type": "quiz",
-    "title": "Our First Date",
-    "question": "Where did we go on our first date?",
-    "answer": "You already know 😏"
+    "type": "compliment-shower",
+    "title": "Ein Regen aus Komplimenten ✨",
+    "text": "Tippe auf den Button und lass dich feiern ❤️",
+    "compliments": [
+      "du bist die Beste",
+      "du bist die Heißeste",
+      "du bist die Klügste",
+      "du bist mein Baby",
+      "du bist meine Seelenverwandte",
+      "du hast wunderschöne Rehaugen"
+    ]
   },
   "4": {
     "type": "audio",
-    "title": "A Message For You",
-    "text": "Close your eyes and listen ❤️",
+    "title": "Eine Nachricht für dich",
+    "text": "Schließ die Augen und hör zu ❤️",
     "audio": "./audio/day4.mp3"
   }
 }
