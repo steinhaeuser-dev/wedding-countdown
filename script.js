@@ -1,4 +1,4 @@
-console.log("💍 Wedding script loaded");
+console.log("💍 Hochzeitsskript geladen");
 
 (() => {
     "use strict";
@@ -6,9 +6,9 @@ console.log("💍 Wedding script loaded");
     const CONFIG = {
         timeZone: "Europe/Berlin",
         totalDays: 24,
-        firstOpenDate: { year: 2026, month: 6, day: 23 }, // June 23, 2026
-        weddingDate: { year: 2026, month: 7, day: 17 },   // July 17, 2026
-        contentUrl: "./content.json?v=20260623-1"
+        firstOpenDate: { year: 2026, month: 6, day: 23 },
+        weddingDate: { year: 2026, month: 7, day: 17 },
+        contentUrl: "./content.json?v=20260625-2"
     };
 
     const els = {
@@ -21,11 +21,11 @@ console.log("💍 Wedding script loaded");
     };
 
     if (!els.calendar || !els.modal || !els.modalTitle || !els.modalBody || !els.closeBtn || !els.countdown) {
-        console.error("❌ Missing required DOM elements");
+        console.error("❌ Benötigte DOM-Elemente fehlen");
         return;
     }
 
-    const berlinFormatter = new Intl.DateTimeFormat("en-CA", {
+    const berlinFormatter = new Intl.DateTimeFormat("de-DE", {
         timeZone: CONFIG.timeZone,
         year: "numeric",
         month: "2-digit",
@@ -73,7 +73,7 @@ console.log("💍 Wedding script loaded");
 
     function updateCountdown() {
         const daysLeft = getDaysUntilWedding();
-        els.countdown.textContent = `${daysLeft} days until we get married ❤️`;
+        els.countdown.textContent = `${daysLeft} Tage bis wir heiraten ❤️`;
     }
 
     function openModal(title, html) {
@@ -90,8 +90,52 @@ console.log("💍 Wedding script loaded");
         document.body.classList.remove("no-scroll");
     }
 
+    function launchComplimentShower(compliments = []) {
+        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        if (reducedMotion) return;
+
+        const shower = document.createElement("div");
+        shower.className = "compliment-shower";
+        document.body.appendChild(shower);
+
+        const phrases = compliments.length
+            ? compliments
+            : [
+                "du bist die Beste",
+                "du bist die Heißeste",
+                "du bist die Klügste",
+                "du bist mein Baby",
+                "du bist meine Seelenverwandte",
+                "du hast wunderschöne Rehaugen"
+            ];
+
+        for (let i = 0; i < 24; i++) {
+            const item = document.createElement("div");
+            item.className = "compliment-drop";
+            item.textContent = phrases[i % phrases.length];
+
+            const left = Math.random() * 100;
+            const delay = Math.random() * 1.2;
+            const duration = 4 + Math.random() * 2.8;
+            const rotate = -18 + Math.random() * 36;
+            const size = 0.9 + Math.random() * 0.7;
+
+            item.style.left = `${left}%`;
+            item.style.animationDelay = `${delay}s`;
+            item.style.animationDuration = `${duration}s`;
+            item.style.transform = `translateY(-20vh) rotate(${rotate}deg) scale(${size})`;
+
+            shower.appendChild(item);
+        }
+
+        setTimeout(() => {
+            shower.remove();
+        }, 8500);
+    }
+
     function renderEntry(entry, day) {
-        const title = entry?.title || `Day ${day}`;
+        const title = entry?.title || `Tag ${day}`;
         els.modalTitle.textContent = title;
 
         switch (entry?.type) {
@@ -109,7 +153,7 @@ console.log("💍 Wedding script loaded");
                     <div class="coupon">
                         <h3>🎟 ${escapeHtml(title)}</h3>
                         <p>${escapeHtml(entry.text || "")}</p>
-                        <small>Redeem anytime ❤️</small>
+                        <small>Jederzeit einlösbar ❤️</small>
                     </div>
                 `;
                 break;
@@ -121,9 +165,9 @@ console.log("💍 Wedding script loaded");
                         ${entry.audio ? `
                             <audio controls preload="none">
                                 <source src="${entry.audio}" type="audio/mpeg">
-                                Your browser does not support the audio element.
+                                Dein Browser unterstützt das Audio-Element nicht.
                             </audio>
-                        ` : "<p>Audio file missing.</p>"}
+                        ` : "<p>Audiodatei fehlt.</p>"}
                     </div>
                 `;
                 break;
@@ -134,53 +178,76 @@ console.log("💍 Wedding script loaded");
                         <h3>❓ ${escapeHtml(title)}</h3>
                         <p>${escapeHtml(entry.question || "")}</p>
                         <details>
-                            <summary>Reveal answer</summary>
+                            <summary>Antwort zeigen</summary>
                             <p>${escapeHtml(entry.answer || "")}</p>
                         </details>
                     </div>
                 `;
                 break;
 
+            case "compliment-shower":
+                els.modalBody.innerHTML = `
+                    <div class="compliment-card">
+                        <p>${escapeHtml(entry.text || "Tippe und lass Komplimente regnen ❤️")}</p>
+                        <button type="button" class="shower-btn" id="startShowerBtn">
+                            ✨ Komplimente regnen lassen
+                        </button>
+                    </div>
+                `;
+                break;
+
             default:
-                els.modalBody.innerHTML = `<p>${escapeHtml(entry?.text || "❤️ Something beautiful is still being prepared for you.")}</p>`;
+                els.modalBody.innerHTML = `<p>${escapeHtml(entry?.text || "❤️ Etwas Wunderschönes wird noch für dich vorbereitet.")}</p>`;
         }
 
         els.modal.classList.remove("hidden");
         els.modal.setAttribute("aria-hidden", "false");
         document.body.classList.add("no-scroll");
+
+        if (entry?.type === "compliment-shower") {
+            const btn = document.getElementById("startShowerBtn");
+            if (btn) {
+                btn.addEventListener("click", () => {
+                    launchComplimentShower(entry.compliments || []);
+                });
+            }
+        }
     }
 
     function buildDoor(day, content) {
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "door";
-        btn.setAttribute("aria-label", `Open day ${day}`);
+        btn.setAttribute("aria-label", `Tag ${day} öffnen`);
 
         const unlockedDay = getUnlockedDay();
 
         if (day < unlockedDay) {
             btn.classList.add("opened");
-            btn.innerHTML = `<span>${day} ✔</span>`;
         } else if (day === unlockedDay) {
             btn.classList.add("today");
-            btn.innerHTML = `<span>${day} ✨</span>`;
         } else {
             btn.classList.add("locked");
-            btn.innerHTML = `<span>${day}</span>`;
         }
+
+        btn.innerHTML = `
+            <span class="door-face">
+                <span class="door-number">${day}</span>
+            </span>
+        `;
 
         btn.addEventListener("click", () => {
             const currentUnlockedDay = getUnlockedDay();
 
             if (day > currentUnlockedDay) {
-                openModal(`Day ${day}`, "<p>🔒 Come back later.</p>");
+                openModal(`Tag ${day}`, "<p>🔒 Komm später wieder.</p>");
                 return;
             }
 
             const entry = content[String(day)];
 
             if (!entry) {
-                openModal(`Day ${day}`, "<p>❤️ Something beautiful is still being prepared for you.</p>");
+                openModal(`Tag ${day}`, "<p>❤️ Etwas Wunderschönes wird noch für dich vorbereitet.</p>");
                 return;
             }
 
@@ -201,14 +268,11 @@ console.log("💍 Wedding script loaded");
     async function loadContent() {
         try {
             const res = await fetch(CONFIG.contentUrl, { cache: "no-store" });
-            if (!res.ok) {
-                throw new Error(`HTTP ${res.status}`);
-            }
-
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json();
             return data && typeof data === "object" ? data : {};
         } catch (error) {
-            console.error("Failed to load content.json:", error);
+            console.error("Fehler beim Laden von content.json:", error);
             return {};
         }
     }
@@ -217,15 +281,11 @@ console.log("💍 Wedding script loaded");
         els.closeBtn.addEventListener("click", closeModal);
 
         els.modal.addEventListener("click", (event) => {
-            if (event.target === els.modal) {
-                closeModal();
-            }
+            if (event.target === els.modal) closeModal();
         });
 
         document.addEventListener("keydown", (event) => {
-            if (event.key === "Escape") {
-                closeModal();
-            }
+            if (event.key === "Escape") closeModal();
         });
     }
 
@@ -233,14 +293,13 @@ console.log("💍 Wedding script loaded");
         bindEvents();
         updateCountdown();
         renderCalendar({});
-
         const content = await loadContent();
         renderCalendar(content);
         updateCountdown();
     }
 
     init().catch((error) => {
-        console.error("Unexpected init error:", error);
+        console.error("Unerwarteter Initialisierungsfehler:", error);
         updateCountdown();
         renderCalendar({});
     });
