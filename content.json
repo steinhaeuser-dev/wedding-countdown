@@ -87,4 +87,12 @@
   "couponTitle": "Winner, winner, chicken dinner!",
   "couponText": "1x free dinner at KFC."
 }
+  "5": {
+  "type": "memory",
+  "title": "Unser erster gemeinsamer Lauf 🏃‍♀️🏃‍♂️",
+  "text": "Noch 20 Tage bis zur Hochzeit! Das ist ganz schön weit – zum Glück sind wir so sportlich. Erinnerst du dich an unseren ersten gemeinsamen 10k?",
+  "photo": "./photos/day5.jpg",
+  "photoAlt": "Unser erster gemeinsamer 10-km-Lauf",
+  "extraText": "10k sind leider nicht genug für 20 Tage, daher ist deine Challenge heute, 20.000 Schritte zu machen. Und los!"
+}
 }
