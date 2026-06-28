@@ -101,5 +101,12 @@
     "text": "Heute erwartet dich ein entspanntes Date an der Talsperre.",
     "photo": "./photos/day6.jpg",
     "photoAlt": ""
-  }
+  },
+ "7": {
+  "type": "memory",
+  "title": "Gutschein für ein Steak im Waldschlösschen 🥩",
+  "text": "Ein leckeres Steak-Date für dich ❤️",
+  "photo": "./photos/day7.jpg",
+  "photoAlt": "Ein Gutscheinbild für ein Steak im Waldschlösschen"
+}
 }
