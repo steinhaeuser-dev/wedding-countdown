@@ -15,92 +15,91 @@
     "title": "Ein Regen aus Komplimenten ✨",
     "text": "Tippe auf den Button und lass dich feiern ❤️",
     "compliments": [
-  "Du bist die Beste.",
-  "Du machst süchtig.",
-  "Du bist die Heißeste.",
-  "Mit dir ist alles schöner.",
-  "Du bist unverzichtbar.",
-  "Du bist die Klügste.",
-  "Dein Lächeln ist bezaubernd.",
-  "Ich mag deine Haare.",
-  "Du bist die Liebste.",
-  "Du bist atemberaubend.",
-  "Ich will dich knuddeln.",
-  "Du bist die Lustigste.",
-  "Auf dich kann man sich immer verlassen.",
-  "Du bist mein Baby.",
-  "Ich liebe dich bis zum Mond und wieder zurück.",
-  "Du bist perfekt.",
-  "Du machst mein Leben heller.",
-  "Du bist mein Zuhause.",
-  "Du bist einfach perfekt.",
-  "Du bist meine Seelenverwandte.",
-  "Bleib, wie du bist.",
-  "Du bist die Mutigste.",
-  "Du bist die Stärkste.",
-  "Du hast superschöne Haare.",
-  "Du bist wunderschön.",
-  "Du bist ein Engel.",
-  "Alle lieben dich.",
-  "Du bist die Intelligenteste.",
-  "Du hast wunderschöne Rehaugen.",
-  "Du hast einen sexy Hintern.",
-  "Ich liebe dich so, so sehr.",
-  "Bei dir will ich immer bleiben.",
-  "Mit dir bin ich Zuhause.",
-  "Du bist die Heißeste.",
-  "Deine Nähe macht alles besser."
-]
+      "Du bist die Beste.",
+      "Du machst süchtig.",
+      "Du bist die Heißeste.",
+      "Mit dir ist alles schöner.",
+      "Du bist unverzichtbar.",
+      "Du bist die Klügste.",
+      "Dein Lächeln ist bezaubernd.",
+      "Ich mag deine Haare.",
+      "Du bist die Liebste.",
+      "Du bist atemberaubend.",
+      "Ich will dich knuddeln.",
+      "Du bist die Lustigste.",
+      "Auf dich kann man sich immer verlassen.",
+      "Du bist mein Baby.",
+      "Ich liebe dich bis zum Mond und wieder zurück.",
+      "Du bist perfekt.",
+      "Du machst mein Leben heller.",
+      "Du bist mein Zuhause.",
+      "Du bist einfach perfekt.",
+      "Du bist meine Seelenverwandte.",
+      "Bleib, wie du bist.",
+      "Du bist die Mutigste.",
+      "Du bist die Stärkste.",
+      "Du hast superschöne Haare.",
+      "Du bist wunderschön.",
+      "Du bist ein Engel.",
+      "Alle lieben dich.",
+      "Du bist die Intelligenteste.",
+      "Du hast wunderschöne Rehaugen.",
+      "Du hast einen sexy Hintern.",
+      "Ich liebe dich so, so sehr.",
+      "Bei dir will ich immer bleiben.",
+      "Mit dir bin ich Zuhause.",
+      "Du bist die Heißeste.",
+      "Deine Nähe macht alles besser."
+    ]
   },
- "4": {
-  "type": "wedding-quiz-3",
-  "title": "Das große 3-Wochen-Hochzeitsquiz 💖",
-  "questions": [
-    {
-      "question": "Wer freut sich am meisten auf die Hochzeit?",
-      "options": [
-        "Du",
-        "Ich",
-        "Der Hund"
-      ],
-      "reveal": "Die richtige Antwort ist: „Wir beide!“ – das war leider nichts. 😘"
-    },
-    {
-      "question": "Was liebe ich an dir am meisten?",
-      "options": [
-        "Deinen Humor",
-        "Deine süßen Rehäuglein",
-        "Deinen Po"
-      ],
-      "reveal": "Leider wieder eine Niete – ich liebe alles an dir! ❤️"
-    },
-    {
-      "question": "Wie lange noch bis zur Hochzeit?",
-      "options": [
-        "Genau 3 Wochen",
-        "Viel zu lange",
-        "Wir sind schon im Geiste verheiratet"
-      ],
-      "reveal": "Natürlich alles richtig! Leider insgesamt nur 1 von 3 – als Trostpreis gewinnst du ein Abendessen bei KFC! 🍗"
-    }
-  ],
-  "couponTitle": "Winner, winner, chicken dinner!",
-  "couponText": "1x free dinner at KFC."
-},
+  "4": {
+    "type": "wedding-quiz-3",
+    "title": "Das große 3-Wochen-Hochzeitsquiz 💖",
+    "questions": [
+      {
+        "question": "Wer freut sich am meisten auf die Hochzeit?",
+        "options": [
+          "Du",
+          "Ich",
+          "Der Hund"
+        ],
+        "reveal": "Die richtige Antwort ist: „Wir beide!“ – das war leider nichts. 😘"
+      },
+      {
+        "question": "Was liebe ich an dir am meisten?",
+        "options": [
+          "Deinen Humor",
+          "Deine süßen Rehäuglein",
+          "Deinen Po"
+        ],
+        "reveal": "Leider wieder eine Niete – ich liebe alles an dir! ❤️"
+      },
+      {
+        "question": "Wie lange noch bis zur Hochzeit?",
+        "options": [
+          "Genau 3 Wochen",
+          "Viel zu lange",
+          "Wir sind schon im Geiste verheiratet"
+        ],
+        "reveal": "Natürlich alles richtig! Leider insgesamt nur 1 von 3 – als Trostpreis gewinnst du ein Abendessen bei KFC! 🍗"
+      }
+    ],
+    "couponTitle": "Winner, winner, chicken dinner!",
+    "couponText": "1x free dinner at KFC."
+  },
   "5": {
-  "type": "memory",
-  "title": "Unser erster gemeinsamer Lauf 🏃‍♀️🏃‍♂️",
-  "text": "Noch 20 Tage bis zur Hochzeit! Das ist ganz schön weit – zum Glück sind wir so sportlich. Erinnerst du dich an unseren ersten gemeinsamen 10k?",
-  "photo": "./photos/day5.jpg",
-  "photoAlt": "Unser erster gemeinsamer 10-km-Lauf",
-  "extraText": "10k sind leider nicht genug für 20 Tage, daher ist deine Challenge heute, 20.000 Schritte zu machen. Und los!"
-},
+    "type": "memory",
+    "title": "Unser erster gemeinsamer Lauf 🏃‍♀️🏃‍♂️",
+    "text": "Noch 20 Tage bis zur Hochzeit! Das ist ganz schön weit – zum Glück sind wir so sportlich. Erinnerst du dich an unseren ersten gemeinsamen 10k?",
+    "photo": "./photos/day5.jpg",
+    "photoAlt": "Unser erster gemeinsamer 10-km-Lauf",
+    "extraText": "10k sind leider nicht genug für 20 Tage, daher ist deine Challenge heute, 20.000 Schritte zu machen. Und los!"
+  },
   "6": {
-  "type": "memory",
-  "title": "Hallo mein Liebster Schatz ❤️",
-  "text": "Heute erwartet dich ein entspanntes Date an der Talsperre.",
-  "photo": "./photos/day6.jpg",
-  "photoAlt": "Ein Bild von unserem Date an der Talsperre"
+    "type": "memory",
+    "title": "Hallo mein Liebster Schatz ❤️",
+    "text": "Heute erwartet dich ein entspanntes Date an der Talsperre.",
+    "photo": "./photos/day6.jpg",
+    "photoAlt": "Ein Bild von unserem Date an der Talsperre"
+  }
 }
-}
-
