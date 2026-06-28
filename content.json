@@ -95,4 +95,11 @@
   "photoAlt": "Unser erster gemeinsamer 10-km-Lauf",
   "extraText": "10k sind leider nicht genug für 20 Tage, daher ist deine Challenge heute, 20.000 Schritte zu machen. Und los!"
 }
+},
+"6": {
+  "type": "memory",
+  "title": "Hallo mein Liebster Schatz ❤️",
+  "text": "Heute erwartet dich ein entspanntes Date an der Talsperre.",
+  "photo": "./photos/day6.jpg",
+  "photoAlt": "Ein Bild von unserem Date an der Talsperre"
 }
