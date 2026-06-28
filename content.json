@@ -97,7 +97,9 @@
   },
   "6": {
     "type": "memory",
-    "title": "Hallo mein Liebster Schatz ❤️",
+    "title": "Hallo mein liebster Schatz ❤️",
     "text": "Heute erwartet dich ein entspanntes Date an der Talsperre.",
+    "photo": "./photos/day6.jpg",
+    "photoAlt": ""
   }
 }
